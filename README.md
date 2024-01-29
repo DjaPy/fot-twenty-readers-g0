@@ -1,2 +1,2 @@
-# fot-twenty-readers-g0
+# fot-twenty-readers-go
 Go version for-twenty-readers
