@@ -13,8 +13,7 @@ import (
 type options struct {
 	Port int    `short:"p" long:"port" description:"port to listen" default:"8080"`
 	Conf string `short:"f" long:"conf" env:"FM_CONF" default:"for_twenty_readers.yml" description:"config file (yml)"`
-
-	Dbg bool `long:"dbg" env:"DEBUG" description:"debug mode"`
+	Dbg  bool   `long:"dbg" env:"DEBUG" description:"debug mode"`
 }
 
 var revision = "local"

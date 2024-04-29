@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/DjaPy/fot-twenty-readers-go/app/config"
+	"github.com/DjaPy/fot-twenty-readers-go/app/proc"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/go-pkgz/rest"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -78,14 +80,30 @@ func (s *Server) calendar(w http.ResponseWriter, r *http.Request) {
 		s.renderErrorPage(w, r, err, 400)
 		return
 	}
-
 }
 
 func (s *Server) createCalendar(w http.ResponseWriter, r *http.Request) {
 
-	err := s.templates.ExecuteTemplate(w, "link_file.gohtml", s.Conf)
+	err := r.ParseForm()
 	if err != nil {
 		s.renderErrorPage(w, r, err, 400)
+		return
+	}
+	entry := CalendarEntry{
+		StartDateKathisma: r.FormValue("start_date_kathisma"),
+		StartKathisma:     atoi(r.FormValue("start_kathisma")),
+		Year:              atoi(r.FormValue("year")),
+	}
+	date, err := time.Parse("2006-01-02", entry.StartDateKathisma)
+	if err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, rest.JSON{"error": err.Error()})
+		return
+	}
+	err = proc.CreateXlSCalendar(date, entry.StartKathisma, entry.Year)
+	if err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, rest.JSON{"error": err.Error()})
 		return
 	}
 }
@@ -101,4 +119,18 @@ func (s *Server) renderErrorPage(w http.ResponseWriter, r *http.Request, err err
 		render.JSON(w, r, rest.JSON{"error": err.Error()})
 		return
 	}
+}
+
+type CalendarEntry struct {
+	StartDateKathisma string `json:"start_date_kathisma"`
+	StartKathisma     int    `json:"start_kathisma"`
+	Year              int    `json:"year"`
+}
+
+func atoi(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	return i
 }
