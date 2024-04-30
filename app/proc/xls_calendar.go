@@ -176,7 +176,7 @@ func getListDate(
 	loopFromTotalKathisma [20]int,
 ) map[int]int {
 	stepKathisma := 1
-	var zeroLoopFirst map[int]int
+	zeroLoopFirst := make(map[int]int)
 	count := 1
 	for i := startKathisma; i < 21; i++ {
 		zeroLoopFirst[count] = i
@@ -263,7 +263,7 @@ func CreateXlSCalendar(startDate time.Time, startKathisma, year int) error {
 	}()
 	for _, numberKathisma := range totalKathismas {
 		sheetName := fmt.Sprintf("Чтец %d", numberKathisma)
-		//index, _ := xls.NewSheet(sheetName)
+		xls.NewSheet(sheetName)
 		addKathismaNumbersToXLS(xls, numberKathisma, sheetName)
 		AddHeaderOfMonthToWs(xls, sheetName)
 		AddColumnWithNumberDayToWs(xls, sheetName)

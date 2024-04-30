@@ -64,8 +64,8 @@ func (s *Server) router() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(rest.AppInfo("for-twenty-readers", "djapy", s.Version), rest.Ping)
 
-	router.Get("/calendar/,", s.calendar)
-	router.Post("/calendar/create/", s.createCalendar)
+	router.Get("/calendar", s.calendar)
+	router.Post("/calendar/create", s.createCalendar)
 	return router
 }
 

@@ -12,7 +12,7 @@ type PathForFile struct {
 }
 
 func getPathForFile() PathForFile {
-	currentFile, err := filepath.Abs(os.Args[0])
+	currentFile, err := os.Executable()
 	if err != nil {
 		panic(err)
 	}
