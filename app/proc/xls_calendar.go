@@ -1,6 +1,7 @@
 package proc
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/xuri/excelize/v2"
 	"maps"
@@ -13,7 +14,10 @@ func getCalendarForTable(startCalendarDate time.Time, year int) map[int][]int {
 	var currentDayList []int
 	currentMonth := 1
 
-	for startCalendarDate.Year() == year {
+	for {
+		if startCalendarDate.Year() == year {
+			break
+		}
 		if startCalendarDate.Day() == 1 {
 			if len(currentDayList) > 0 {
 				tableYear[currentMonth] = currentDayList
@@ -245,7 +249,7 @@ func CreateCalendarForReaderToXLS(
 	}
 }
 
-func CreateXlSCalendar(startDate time.Time, startKathisma, year int) error {
+func CreateXlSCalendar(startDate time.Time, startKathisma, year int) (*bytes.Buffer, error) {
 	if year == 0 {
 		year = startDate.Year()
 	}
@@ -276,5 +280,8 @@ func CreateXlSCalendar(startDate time.Time, startKathisma, year int) error {
 	}
 	p := getPathForFile()
 	err := xls.SaveAs(p.outFile)
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return xls.WriteToBuffer()
 }

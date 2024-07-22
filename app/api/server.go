@@ -100,12 +100,17 @@ func (s *Server) createCalendar(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, rest.JSON{"error": err.Error()})
 		return
 	}
-	err = proc.CreateXlSCalendar(date, entry.StartKathisma, entry.Year)
+	file, err := proc.CreateXlSCalendar(date, entry.StartKathisma, entry.Year)
 	if err != nil {
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, rest.JSON{"error": err.Error()})
 		return
 	}
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Header().Set("Content-Disposition", "attachment; filename=\"file.xlsx\"")
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(file.Bytes())
 }
 
 func (s *Server) renderErrorPage(w http.ResponseWriter, r *http.Request, err error, errCode int) { // nolint
