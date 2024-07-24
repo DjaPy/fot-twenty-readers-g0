@@ -15,7 +15,7 @@ func getCalendarForTable(startCalendarDate time.Time, year int) map[int][]int {
 	currentMonth := 1
 
 	for {
-		if startCalendarDate.Year() == year {
+		if startCalendarDate.Year() == year+1 {
 			break
 		}
 		if startCalendarDate.Day() == 1 {
@@ -64,14 +64,13 @@ func GetNumberDaysInYear(year int) int {
 	return int(endYear.Sub(startYear).Hours() / 24)
 }
 
-// add_kathisma_numbers_to_worksheet(ws, number)
 func addKathismaNumbersToXLS(xls *excelize.File, number int, sheetName string) {
 	style, err := xls.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
-			{Type: "left", Color: "00000000", Style: 8},
-			{Type: "top", Color: "00000000", Style: 8},
-			{Type: "bottom", Color: "00000000", Style: 8},
-			{Type: "right", Color: "00000000", Style: 8},
+			{Type: "left", Color: "000000", Style: 8},
+			{Type: "top", Color: "000000", Style: 8},
+			{Type: "bottom", Color: "000000", Style: 8},
+			{Type: "right", Color: "000000", Style: 8},
 		},
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
 		Font:      &excelize.Font{Family: "Trebuchet MS", Bold: true, Size: 16},
@@ -79,14 +78,8 @@ func addKathismaNumbersToXLS(xls *excelize.File, number int, sheetName string) {
 	if err != nil {
 		panic(err)
 	}
-	err1 := xls.SetCellValue(sheetName, "A2", number)
-	if err1 != nil {
-		panic(err1)
-	}
-	err2 := xls.SetCellStyle(sheetName, "A2", "A2", style)
-	if err2 != nil {
-		panic(err2)
-	}
+	xls.SetCellValue(sheetName, "A2", strconv.Itoa(number))
+	xls.SetCellStyle(sheetName, "A2", "A2", style)
 }
 
 func AddHeaderOfMonthToWs(xls *excelize.File, sheetName string) {
@@ -97,13 +90,13 @@ func AddHeaderOfMonthToWs(xls *excelize.File, sheetName string) {
 	}
 	style, err := xls.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
-			{Type: "left", Color: "00000000", Style: 8},
-			{Type: "top", Color: "00000000", Style: 8},
-			{Type: "bottom", Color: "00000000", Style: 8},
-			{Type: "right", Color: "00000000", Style: 8},
+			{Type: "left", Color: "000000", Style: 8},
+			{Type: "top", Color: "000000", Style: 8},
+			{Type: "bottom", Color: "000000", Style: 8},
+			{Type: "right", Color: "000000", Style: 8},
 		},
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
-		Font:      &excelize.Font{Family: "Calibri", Color: "00FF8080", Size: 16},
+		Font:      &excelize.Font{Family: "Calibri", Color: "FF8080", Size: 16},
 	})
 	if err != nil {
 		panic(err)
@@ -121,11 +114,11 @@ func AddColumnWithNumberDayToWs(xls *excelize.File, sheetName string) {
 	})
 
 	for number := 1; number <= 31; number++ {
-		numbeCell := number + 1
-		cellNameLeft := fmt.Sprintf("A%d", numbeCell)
-		cellNameRight := fmt.Sprintf("N%d", numbeCell)
-		xls.SetCellValue(sheetName, cellNameLeft, number)
-		xls.SetCellValue(sheetName, cellNameRight, number)
+		numberCell := number + 2
+		cellNameLeft := fmt.Sprintf("A%d", numberCell)
+		cellNameRight := fmt.Sprintf("N%d", numberCell)
+		xls.SetCellValue(sheetName, cellNameLeft, strconv.Itoa(number))
+		xls.SetCellValue(sheetName, cellNameRight, strconv.Itoa(number))
 		xls.SetCellStyle(sheetName, cellNameLeft, cellNameLeft, style)
 		xls.SetCellStyle(sheetName, cellNameRight, cellNameRight, style)
 	}
@@ -184,7 +177,7 @@ func getListDate(
 	count := 1
 	for i := startKathisma; i < 21; i++ {
 		zeroLoopFirst[count] = i
-		count += 1
+		count++
 	}
 	startLoopFirst := len(zeroLoopFirst) + stepKathisma
 	endLoopFirst := startNoReading.YearDay() - 1
@@ -202,6 +195,8 @@ func getListDate(
 	maps.Copy(zeroLoopFirst, loopFirst)
 	maps.Copy(zeroLoopSecond, loopSecond)
 	maps.Copy(zeroLoopFirst, zeroLoopSecond)
+	fmt.Println(zeroLoopFirst[endLoopFirst+1], zeroLoopFirst[endLoopFirst])
+
 	return zeroLoopFirst
 }
 
@@ -222,7 +217,7 @@ func CreateCalendarForReaderToXLS(
 ) {
 	style, _ := xls.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
-		Font:      &excelize.Font{Family: "Trebuchet MS", Size: 14},
+		Font:      &excelize.Font{Family: "Trebuchet MS", Size: 14, Color: "000000"},
 	})
 	cellStep := 1
 	frameMonth := map[int]string{
@@ -243,7 +238,7 @@ func CreateCalendarForReaderToXLS(
 			cellName := cellMonth + strconv.Itoa(cellNameIndex)
 			targetDate := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 			dayNow := targetDate.Day()
-			xls.SetCellValue(sheetName, cellName, allKathisma[dayNow])
+			xls.SetCellValue(sheetName, cellName, strconv.Itoa(allKathisma[dayNow]))
 			xls.SetCellStyle(sheetName, cellName, cellName, style)
 		}
 	}
