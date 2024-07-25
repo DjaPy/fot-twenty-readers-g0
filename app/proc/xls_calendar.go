@@ -67,10 +67,10 @@ func GetNumberDaysInYear(year int) int {
 func addKathismaNumbersToXLS(xls *excelize.File, number int, sheetName string) {
 	style, err := xls.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 8},
-			{Type: "top", Color: "000000", Style: 8},
-			{Type: "bottom", Color: "000000", Style: 8},
-			{Type: "right", Color: "000000", Style: 8},
+			{Type: "left", Color: "000000", Style: 3},
+			{Type: "top", Color: "000000", Style: 3},
+			{Type: "bottom", Color: "000000", Style: 3},
+			{Type: "right", Color: "000000", Style: 3},
 		},
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
 		Font:      &excelize.Font{Family: "Trebuchet MS", Bold: true, Size: 16},
@@ -90,10 +90,10 @@ func AddHeaderOfMonthToWs(xls *excelize.File, sheetName string) {
 	}
 	style, err := xls.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 8},
-			{Type: "top", Color: "000000", Style: 8},
-			{Type: "bottom", Color: "000000", Style: 8},
-			{Type: "right", Color: "000000", Style: 8},
+			{Type: "left", Color: "000000", Style: 3},
+			{Type: "top", Color: "000000", Style: 3},
+			{Type: "bottom", Color: "000000", Style: 3},
+			{Type: "right", Color: "000000", Style: 3},
 		},
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
 		Font:      &excelize.Font{Family: "Calibri", Color: "FF8080", Size: 16},
@@ -137,7 +137,7 @@ func cycleSlice(genLoop []int, loopFromTotalKathisma [20]int) map[int]int {
 	return loopFirst
 }
 
-func getGenLoopFirst(startLoop int, endLoop int) []int {
+func getGenLoop(startLoop int, endLoop int) []int {
 	newLoop := make([]int, 0)
 	for i := startLoop; i < endLoop+1; i++ {
 		newLoop = append(newLoop, i)
@@ -155,12 +155,12 @@ func getCalendarHash(
 	startNumberKathismaZeroLoopSecond := endNumberKathismaFirstLoop + stepKathisma
 	zeroLoopSecond := make(map[int]int)
 	count := 0
-	for kathisma := startNumberKathismaZeroLoopSecond; kathisma <= 21; kathisma++ {
-		zeroLoopSecond[count+startNumberKathismaZeroLoopSecond] = kathisma
+	for kathisma := startNumberKathismaZeroLoopSecond; kathisma < 21; kathisma++ {
+		zeroLoopSecond[count+startZeroLoopSecond] = kathisma
 		count++
 	}
 	startLoopSecond := startZeroLoopSecond + len(zeroLoopSecond)
-	genLoopSecond := getGenLoopFirst(startLoopSecond, numberDaysInYear+1)
+	genLoopSecond := getGenLoop(startLoopSecond, numberDaysInYear+1)
 	loopSecond := cycleSlice(genLoopSecond, loopFromTotalKathisma)
 	return loopSecond, zeroLoopSecond
 }
@@ -182,7 +182,7 @@ func getListDate(
 	startLoopFirst := len(zeroLoopFirst) + stepKathisma
 	endLoopFirst := startNoReading.YearDay() - 1
 	startZeroLoopSecond := endNoReading.YearDay() + 1
-	genLoopFirst := getGenLoopFirst(startLoopFirst, endLoopFirst)
+	genLoopFirst := getGenLoop(startLoopFirst, endLoopFirst)
 	loopFirst := cycleSlice(genLoopFirst, loopFromTotalKathisma)
 	endNumberKathismaFirstLoop := loopFirst[endLoopFirst]
 	loopSecond, zeroLoopSecond := getCalendarHash(
@@ -190,13 +190,11 @@ func getListDate(
 		loopFromTotalKathisma,
 		numberDaysInYear,
 		startZeroLoopSecond,
-		startKathisma,
+		stepKathisma,
 	)
 	maps.Copy(zeroLoopFirst, loopFirst)
 	maps.Copy(zeroLoopSecond, loopSecond)
 	maps.Copy(zeroLoopFirst, zeroLoopSecond)
-	fmt.Println(zeroLoopFirst[endLoopFirst+1], zeroLoopFirst[endLoopFirst])
-
 	return zeroLoopFirst
 }
 
@@ -226,19 +224,26 @@ func CreateCalendarForReaderToXLS(
 	frameNumberDayA := getFrameNumberDay("A", 3, 33) // A = 1
 	frameNumberDayN := getFrameNumberDay("N", 3, 33) // N = 1
 	for num, _ := range frameNumberDayN {
-		xls.SetCellValue(sheetName, frameNumberDayN[num], strconv.Itoa(num))
-		xls.SetCellValue(sheetName, frameNumberDayA[num], strconv.Itoa(num))
+		xls.SetCellValue(sheetName, frameNumberDayN[num], strconv.Itoa(num-2))
+		xls.SetCellValue(sheetName, frameNumberDayA[num], strconv.Itoa(num-2))
 	}
 
 	for month, days := range calendarTable {
 		cellMonth := frameMonth[month]
 		cellNameIndex := 2
+		var keyDayStr string
 		for _, day := range days {
 			cellNameIndex += cellStep
 			cellName := cellMonth + strconv.Itoa(cellNameIndex)
 			targetDate := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-			dayNow := targetDate.Day()
-			xls.SetCellValue(sheetName, cellName, strconv.Itoa(allKathisma[dayNow]))
+			dayNow := targetDate.YearDay()
+
+			if keyDay, ok := allKathisma[dayNow]; !ok {
+				keyDayStr = ""
+			} else {
+				keyDayStr = strconv.Itoa(keyDay)
+			}
+			xls.SetCellValue(sheetName, cellName, keyDayStr)
 			xls.SetCellStyle(sheetName, cellName, cellName, style)
 		}
 	}
