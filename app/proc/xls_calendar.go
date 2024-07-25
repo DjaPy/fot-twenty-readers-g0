@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const FONTTREBUCHET = "Trebuchet MS"
+
 func getCalendarForTable(startCalendarDate time.Time, year int) map[int][]int {
 	tableYear := make(map[int][]int)
 	var currentDayList []int
@@ -73,7 +75,7 @@ func addKathismaNumbersToXLS(xls *excelize.File, number int, sheetName string) {
 			{Type: "right", Color: "000000", Style: 3},
 		},
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
-		Font:      &excelize.Font{Family: "Trebuchet MS", Bold: true, Size: 16},
+		Font:      &excelize.Font{Family: FONTTREBUCHET, Bold: true, Size: 16},
 	})
 	if err != nil {
 		panic(err)
@@ -90,10 +92,10 @@ func AddHeaderOfMonthToWs(xls *excelize.File, sheetName string) {
 	}
 	style, err := xls.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 3},
-			{Type: "top", Color: "000000", Style: 3},
-			{Type: "bottom", Color: "000000", Style: 3},
-			{Type: "right", Color: "000000", Style: 3},
+			{Type: "left", Color: "000000", Style: 0},
+			{Type: "top", Color: "000000", Style: 0},
+			{Type: "bottom", Color: "000000", Style: 0},
+			{Type: "right", Color: "000000", Style: 0},
 		},
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
 		Font:      &excelize.Font{Family: "Calibri", Color: "FF8080", Size: 16},
@@ -110,7 +112,7 @@ func AddHeaderOfMonthToWs(xls *excelize.File, sheetName string) {
 func AddColumnWithNumberDayToWs(xls *excelize.File, sheetName string) {
 	style, _ := xls.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
-		Font:      &excelize.Font{Family: "Trebuchet MS", Size: 12},
+		Font:      &excelize.Font{Family: FONTTREBUCHET, Size: 12},
 	})
 
 	for number := 1; number <= 31; number++ {
@@ -215,7 +217,7 @@ func CreateCalendarForReaderToXLS(
 ) {
 	style, _ := xls.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
-		Font:      &excelize.Font{Family: "Trebuchet MS", Size: 14, Color: "000000"},
+		Font:      &excelize.Font{Family: FONTTREBUCHET, Size: 14, Color: "000000"},
 	})
 	cellStep := 1
 	frameMonth := map[int]string{
@@ -223,7 +225,7 @@ func CreateCalendarForReaderToXLS(
 	}
 	frameNumberDayA := getFrameNumberDay("A", 3, 33) // A = 1
 	frameNumberDayN := getFrameNumberDay("N", 3, 33) // N = 1
-	for num, _ := range frameNumberDayN {
+	for num := range frameNumberDayN {
 		xls.SetCellValue(sheetName, frameNumberDayN[num], strconv.Itoa(num-2))
 		xls.SetCellValue(sheetName, frameNumberDayA[num], strconv.Itoa(num-2))
 	}
