@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/DjaPy/fot-twenty-readers-go/app/api"
-	"github.com/DjaPy/fot-twenty-readers-go/app/config"
+	"github.com/DjaPy/fot-twenty-readers-go/src/api"
+	"github.com/DjaPy/fot-twenty-readers-go/src/config"
 	log "github.com/go-pkgz/lgr"
 	"github.com/jessevdk/go-flags"
 	"os"

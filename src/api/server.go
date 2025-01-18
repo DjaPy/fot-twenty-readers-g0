@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/DjaPy/fot-twenty-readers-go/app/config"
-	"github.com/DjaPy/fot-twenty-readers-go/app/proc"
+	"github.com/DjaPy/fot-twenty-readers-go/src/config"
+	"github.com/DjaPy/fot-twenty-readers-go/src/proc"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/go-pkgz/rest"
