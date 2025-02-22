@@ -10,7 +10,7 @@ require (
 	github.com/go-pkgz/rest v1.18.2
 	github.com/gofrs/uuid/v5 v5.3.0
 	github.com/jessevdk/go-flags v1.5.0
-	github.com/pkg/errors v0.9.1
+	github.com/sirupsen/logrus v1.9.3
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	github.com/xuri/excelize/v2 v2.8.1
 )
